@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PMT 210 / ECN 214 — CBT Practice Exam</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,500;0,600;0,700;1,500&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
+
+  :root{
+    --paper:#F5F1E6;
+    --paper-line:#d8cfb8;
+    --ink:#1c2b3a;
+    --ink-soft:#4a5a6a;
+    --navy:#1c2b3a;
+    --red:#a3311d;
+    --red-soft:#c1462f;
+    --green:#2f5d3a;
+    --green-soft:#e7efe4;
+    --red-bg:#f6e6e1;
+    --gold:#b8863b;
+    --card:#fffdf7;
+    --shadow: 0 2px 0 rgba(28,43,58,0.06), 0 12px 24px -16px rgba(28,43,58,0.35);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      repeating-linear-gradient(180deg, transparent, transparent 27px, var(--paper-line) 28px),
+      var(--paper);
+    color:var(--ink);
+    font-family:'Inter', system-ui, sans-serif;
+    min-height:100vh;
+    padding: 28px 16px 60px;
+  }
+  .wrap{max-width:840px;margin:0 auto;}
+
+  header.masthead{
+    display:flex; align-items:flex-end; justify-content:space-between;
+    border-bottom: 3px solid var(--ink);
+    padding-bottom:14px; margin-bottom:22px;
+    flex-wrap:wrap; gap:10px;
+  }
+  .masthead h1{
+    font-family:'Source Serif 4', serif;
+    font-weight:700; font-style:italic;
+    font-size:clamp(26px,5vw,34px);
+    margin:0; letter-spacing:0.2px;
+  }
+  .masthead .sub{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px; color:var(--ink-soft);
+    text-transform:uppercase; letter-spacing:1.5px;
+  }
+  .masthead .stamp{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px; color:var(--ink-soft);
+    border:1.5px solid var(--ink-soft); border-radius:3px;
+    padding:5px 9px; transform:rotate(-2deg);
+    white-space:nowrap;
+  }
+
+  /* SETUP SCREEN */
+  #setup .card{
+    background:var(--card); border:1px solid var(--paper-line);
+    border-radius:6px; padding:26px 24px; box-shadow:var(--shadow);
+  }
+  #setup h2{font-family:'Source Serif 4', serif; font-size:21px; margin:0 0 6px;}
+  #setup p.desc{color:var(--ink-soft); font-size:14.5px; line-height:1.55; margin:0 0 20px;}
+  .sec-choice{
+    display:flex; flex-direction:column; gap:10px; margin-bottom:22px;
+  }
+  .sec-opt{
+    display:flex; align-items:center; gap:12px;
+    border:1.5px solid var(--paper-line); border-radius:5px;
+    padding:13px 14px; cursor:pointer; background:#fffefb;
+    transition: border-color .15s, background .15s;
+  }
+  .sec-opt:hover{border-color:var(--gold);}
+  .sec-opt.active{border-color:var(--red-soft); background:var(--red-bg);}
+  .sec-opt input{accent-color:var(--red-soft); width:16px; height:16px;}
+  .sec-opt .label{flex:1;}
+  .sec-opt .name{font-weight:600; font-size:15px;}
+  .sec-opt .count{font-family:'IBM Plex Mono', monospace; font-size:12px; color:var(--ink-soft);}
+  .start-row{display:flex; align-items:center; gap:14px; flex-wrap:wrap;}
+  .btn{
+    font-family:'IBM Plex Mono', monospace; font-weight:600; font-size:13.5px;
+    letter-spacing:0.5px; text-transform:uppercase;
+    background:var(--ink); color:var(--paper);
+    border:none; border-radius:4px; padding:13px 22px;
+    cursor:pointer; transition: transform .1s, background .15s;
+  }
+  .btn:hover{background:#0f1926;}
+  .btn:active{transform:scale(0.98);}
+  .btn.secondary{background:transparent; color:var(--ink); border:1.5px solid var(--ink);}
+  .btn.secondary:hover{background:var(--ink); color:var(--paper);}
+  .btn:disabled{opacity:0.4; cursor:not-allowed;}
+  .shuffle-row{display:flex; align-items:center; gap:8px; font-size:13.5px; color:var(--ink-soft);}
+  .shuffle-row input{accent-color:var(--red-soft); width:15px; height:15px;}
+
+  /* QUIZ SCREEN */
+  #quiz{display:none;}
+  .progress-bar{
+    height:6px; background:var(--paper-line); border-radius:3px; overflow:hidden; margin-bottom:18px;
+  }
+  .progress-fill{height:100%; background:linear-gradient(90deg,var(--gold),var(--red-soft)); width:0%; transition:width .3s;}
+  .meta-row{
+    display:flex; justify-content:space-between; align-items:center;
+    font-family:'IBM Plex Mono', monospace; font-size:12.5px; color:var(--ink-soft);
+    margin-bottom:14px;
+  }
+  .qcard{
+    background:var(--card); border:1px solid var(--paper-line); border-radius:6px;
+    padding:26px 24px; box-shadow:var(--shadow); position:relative;
+  }
+  .qnum{
+    font-family:'IBM Plex Mono', monospace; font-size:12px; color:var(--gold);
+    text-transform:uppercase; letter-spacing:1.5px; margin-bottom:8px;
+  }
+  .qtext{
+    font-family:'Source Serif 4', serif; font-size:19px; line-height:1.5;
+    margin:0 0 20px; color:var(--ink);
+  }
+  .opts{display:flex; flex-direction:column; gap:10px;}
+  .opt{
+    display:flex; align-items:center; gap:12px;
+    border:1.5px solid var(--paper-line); border-radius:5px;
+    padding:12px 14px; cursor:pointer; background:#fffefb;
+    font-size:15px; transition: border-color .15s, background .15s, transform .1s;
+  }
+  .opt:hover{border-color:var(--gold); transform:translateX(2px);}
+  .opt .letter{
+    font-family:'IBM Plex Mono', monospace; font-weight:600; font-size:12.5px;
+    width:22px; height:22px; border-radius:50%; border:1.5px solid var(--ink-soft);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    color:var(--ink-soft);
+  }
+  .opt.correct{border-color:var(--green); background:var(--green-soft);}
+  .opt.correct .letter{background:var(--green); border-color:var(--green); color:#fff;}
+  .opt.wrong{border-color:var(--red-soft); background:var(--red-bg);}
+  .opt.wrong .letter{background:var(--red-soft); border-color:var(--red-soft); color:#fff;}
+  .opt.disabled-opt{cursor:default;}
+  .opt.faded{opacity:0.5;}
+
+  .blank-input-row{display:flex; gap:10px; margin-bottom:6px;}
+  .blank-input-row input[type=text]{
+    flex:1; font-family:'Inter',sans-serif; font-size:15px;
+    padding:12px 14px; border:1.5px solid var(--paper-line); border-radius:5px;
+    background:#fffefb; color:var(--ink);
+  }
+  .blank-input-row input[type=text]:focus{outline:none; border-color:var(--gold);}
+
+  .stamp-badge{
+    position:absolute; top:20px; right:22px;
+    font-family:'IBM Plex Mono', monospace; font-weight:700; font-size:12px;
+    letter-spacing:1px; text-transform:uppercase;
+    border:2.5px solid; border-radius:4px; padding:5px 10px;
+    transform:rotate(4deg);
+    animation: stampIn .22s ease-out;
+  }
+  .stamp-badge.correct{color:var(--green); border-color:var(--green);}
+  .stamp-badge.wrong{color:var(--red-soft); border-color:var(--red-soft);}
+  @keyframes stampIn{
+    from{transform:rotate(4deg) scale(1.6); opacity:0;}
+    to{transform:rotate(4deg) scale(1); opacity:1;}
+  }
+
+  .explain{
+    display:none; margin-top:18px; padding:14px 16px;
+    background:#f1ece0; border-left:3px solid var(--gold); border-radius:0 4px 4px 0;
+    font-size:14.5px; line-height:1.6; color:var(--ink);
+  }
+  .explain .exlabel{
+    font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:1px;
+    text-transform:uppercase; color:var(--gold); display:block; margin-bottom:5px; font-weight:600;
+  }
+  .explain .correct-ans{font-weight:600;}
+
+  .nav-row{
+    display:flex; justify-content:space-between; align-items:center;
+    margin-top:20px; gap:10px; flex-wrap:wrap;
+  }
+  .nav-row .left-btns, .nav-row .right-btns{display:flex; gap:10px;}
+
+  /* RESULTS */
+  #results{display:none;}
+  .score-card{
+    background:var(--card); border:1px solid var(--paper-line); border-radius:6px;
+    padding:34px 26px; text-align:center; box-shadow:var(--shadow);
+  }
+  .score-card .big{
+    font-family:'Source Serif 4', serif; font-weight:700; font-size:56px; color:var(--ink);
+  }
+  .score-card .grade-line{font-family:'IBM Plex Mono',monospace; color:var(--ink-soft); margin-top:6px; font-size:13px; letter-spacing:1px; text-transform:uppercase;}
+  .score-card .remark{margin-top:14px; font-family:'Source Serif 4', serif; font-style:italic; font-size:17px; color:var(--red-soft);}
+  .review-list{margin-top:26px; text-align:left;}
+  .review-item{
+    border-bottom:1px solid var(--paper-line); padding:12px 4px; font-size:13.5px;
+    display:flex; gap:10px; align-items:flex-start;
+  }
+  .review-item .rmark{font-weight:700; width:20px; flex-shrink:0;}
+  .review-item .rmark.ok{color:var(--green);}
+  .review-item .rmark.no{color:var(--red-soft);}
+  .review-item .rq{color:var(--ink-soft);}
+  footer.credit{
+    text-align:center; margin-top:30px; font-family:'IBM Plex Mono',monospace;
+    font-size:11px; color:var(--ink-soft); letter-spacing:0.5px;
+  }
+  @media(max-width:520px){
+    .qtext{font-size:17px;}
+    .score-card .big{font-size:44px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <div>
+      <h1>PMT 210 &nbsp;/&nbsp; ECN 214</h1>
+      <div class="sub">Computer-Based Test &middot; Principles of Economics</div>
+    </div>
+    <div class="stamp">FUTA &middot; Practice Session</div>
+  </header>
+
+  <section id="setup">
+    <div class="card">
+      <h2>Set up your practice session</h2>
+      <p class="desc">Choose which question sets to include. Every question reveals the correct answer and a short explanation the moment you pick a choice — so you can learn as you go, not just at the end.</p>
+
+      <div class="sec-choice" id="secChoice"></div>
+
+      <div class="start-row">
+        <button class="btn" id="startBtn">Start Test</button>
+        <label class="shuffle-row"><input type="checkbox" id="shuffleBox" checked> Shuffle questions</label>
+      </div>
+    </div>
+  </section>
+
+  <section id="quiz">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="meta-row">
+      <span id="metaLeft">Question 1 of 1</span>
+      <span id="metaRight">Score: 0 / 0</span>
+    </div>
+    <div class="qcard" id="qcard">
+      <div class="qnum" id="qnum">SECTION A</div>
+      <p class="qtext" id="qtext"></p>
+      <div class="opts" id="opts"></div>
+      <div class="explain" id="explain">
+        <span class="exlabel">Explanation</span>
+        <div id="explainBody"></div>
+      </div>
+      <div class="nav-row">
+        <div class="left-btns">
+          <button class="btn secondary" id="quitBtn">End Session</button>
+        </div>
+        <div class="right-btns">
+          <button class="btn" id="nextBtn" disabled>Next Question →</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="results">
+    <div class="score-card">
+      <div class="big" id="scoreBig">0%</div>
+      <div class="grade-line" id="scoreLine">0 of 0 correct</div>
+      <div class="remark" id="scoreRemark"></div>
+      <div class="start-row" style="justify-content:center; margin-top:22px;">
+        <button class="btn" id="restartBtn">Take Another Session</button>
+      </div>
+      <div class="review-list" id="reviewList"></div>
+    </div>
+  </section>
+
+  <footer class="credit">Compiled from PMT 210 / ECN 214 study materials &middot; for self-practice only</footer>
+</div>
+
+<script>
+const SECTIONS = [{"id": "A", "title": "Basic Principles of Economics (MCQ)", "items": [{"type": "mcq", "q": "Who defined economics as a practical science of production and distribution of wealth?", "opts": ["Lionel Robbins", "Sam Aluko", "J. S. Mill", "A. C. Pigou"], "ans": 2, "exp": "J. S. Mill (1844) defined economics as the practical science of production and distribution of wealth."}, {"type": "mcq", "q": "Whose definition of economics was adopted by a dictionary?", "opts": ["Lionel Robbins", "Sam Aluko", "J. S. Mill", "A. C. Pigou"], "ans": 2, "exp": "J. S. Mill's definition was the one adopted by a dictionary."}, {"type": "mcq", "q": "Who defined economics as the queen of social science?", "opts": ["Lionel Robbins", "Sam Aluko", "Paul A. Samuelson", "A. C. Pigou"], "ans": 2, "exp": "Paul A. Samuelson regarded economics as the queen of social science."}, {"type": "mcq", "q": "Who considered economics to be the study of mankind in ordinary business life?", "opts": ["Lionel Robbins", "Sam Aluko", "Alfred Marshal", "A. C. Pigou"], "ans": 2, "exp": "Alfred Marshal (1890) defined economics as the study of mankind in the ordinary business of life."}, {"type": "mcq", "q": "Who gave the more generally acceptable modern definition of economics?", "opts": ["Lionel Robbins", "Sam Aluko", "J. S. Mill", "Alfred Marshal"], "ans": 0, "exp": "Prof. Lord Lionel Robbins gave the most generally accepted modern definition of economics."}, {"type": "mcq", "q": "Who defined economics as a science which studies human behaviour as a relationship between ends and scarce means which have alternative uses?", "opts": ["Lionel Robbins", "Sam Aluko", "Alfred Marshal", "A. C. Pigou"], "ans": 0, "exp": "This is Lionel Robbins' classic definition of economics."}, {"type": "mcq", "q": "________ refers to the limited nature of the supply of resources or means in relation to the demand for them.", "opts": ["Scarcity", "Want", "Choice", "Utility"], "ans": 0, "exp": "Scarcity is the limited nature of resources relative to demand for them."}, {"type": "mcq", "q": "Which is the fundamental economic problem of an individual, firm and society generally?", "opts": ["Scarcity", "Want", "Choice", "Scarcity and choice"], "ans": 3, "exp": "Scarcity (limited resources) combined with choice (deciding among wants) is the fundamental economic problem."}, {"type": "mcq", "q": "A socialist economy is also known as all of the following EXCEPT:", "opts": ["Communist economy", "Centralised economy", "Free enterprise economy", "Command economy"], "ans": 2, "exp": "Free enterprise economy describes capitalism, not socialism."}, {"type": "mcq", "q": "An arrangement defining how resources are owned, and how production, distribution and consumption are organized and controlled in a society is called:", "opts": ["Economic system", "Market structure", "Fiscal policy", "Trade policy"], "ans": 0, "exp": "This describes an economic system."}, {"type": "mcq", "q": "A capitalist economy is otherwise known as all the following EXCEPT:", "opts": ["Free-enterprise economy", "Laissez-faire", "Free market economy", "None of the above"], "ans": 3, "exp": "All three (free-enterprise, laissez-faire, free market) are alternate names for capitalism, so 'none of the above' is correct as the exception."}, {"type": "mcq", "q": "Which of the following is NOT a function of an economic system?", "opts": ["Allocation of resources, organisation of production and distribution", "Economic growth and development", "Economic stability", "None of the above"], "ans": 3, "exp": "Allocation of resources, economic growth/development, and economic stability are all functions of an economic system, so none of the above is the exception."}, {"type": "mcq", "q": "The process by which the monetary value of a commodity is determined by supply and demand, called by Adam Smith the 'invisible hand', is known as:", "opts": ["Price system/mechanism", "Fiscal policy", "Trade policy", "Monetary policy"], "ans": 0, "exp": "This is the price system or price mechanism."}, {"type": "mcq", "q": "A table showing the quantity of a product that would be purchased at each possible price is a:", "opts": ["Demand curve", "Demand schedule", "Supply schedule", "Utility table"], "ans": 1, "exp": "This describes a demand schedule."}, {"type": "mcq", "q": "A graphical illustration of a demand schedule is a:", "opts": ["Demand curve", "Supply curve", "Utility curve", "Indifference curve"], "ans": 0, "exp": "The demand curve graphically illustrates the demand schedule."}, {"type": "mcq", "q": "The quantity of a commodity a single consumer would be willing and able to purchase at various prices is:", "opts": ["Market demand", "Individual demand", "Personal demand", "None of the above"], "ans": 1, "exp": "This describes individual demand."}, {"type": "mcq", "q": "The sum of quantities that would be purchased by all consumers of a product at each price is:", "opts": ["Market demand", "Individual demand", "Personal demand", "None of the above"], "ans": 0, "exp": "This describes market demand \u2014 the aggregate of individual demands."}, {"type": "mcq", "q": "Which clearly defines the increase in demand for cheap basic foodstuffs when their prices rise?", "opts": ["Goods of ostentation", "Weblen goods", "Cheap goods", "Giffen goods"], "ans": 3, "exp": "Giffen goods show increased demand as price rises, typically cheap staple foods."}, {"type": "mcq", "q": "In economics, goods of ostentation are also called:", "opts": ["Goods of ostentation", "Weblen (Veblen) goods", "Cheap goods", "Giffen goods"], "ans": 1, "exp": "Goods of ostentation are also known as Veblen goods."}, {"type": "mcq", "q": "Which is NOT a case where one may obtain an exceptional demand curve?", "opts": ["Inferior goods", "Goods of ostentation", "Fear of future price rise", "None of the above"], "ans": 3, "exp": "Inferior goods, ostentation goods, and fear of future price rise are all exceptions to the law of demand, so none of the above is correct."}, {"type": "mcq", "q": "The amount of a commodity a producer is able and willing to offer for sale over a specific period is:", "opts": ["Demand", "Supply", "Utility", "Elasticity"], "ans": 1, "exp": "This describes supply."}, {"type": "mcq", "q": "Who likened the forces of demand and supply to 'two blades of scissors'?", "opts": ["Lionel Robbins", "Sam Aluko", "Alfred Marshal", "A. C. Pigou"], "ans": 2, "exp": "Alfred Marshal likened demand and supply to the two blades of a pair of scissors."}, {"type": "mcq", "q": "The equilibrium price is the price at which quantity demanded equals quantity supplied.", "opts": ["True", "False"], "ans": 0, "exp": "This is the standard definition of equilibrium price."}, {"type": "mcq", "q": "Utility is the power or property of a commodity to satisfy human desire.", "opts": ["True", "False"], "ans": 0, "exp": "This is the standard definition of utility."}, {"type": "mcq", "q": "The degree of responsiveness of demand to change in price, taste, income or other determinant is:", "opts": ["Price elasticity of demand", "Elasticity of demand", "Income elasticity of demand", "Point elasticity of demand"], "ans": 1, "exp": "This general concept is 'elasticity of demand'."}, {"type": "mcq", "q": "The degree of responsiveness of demand for a commodity to changes in its own price is:", "opts": ["Price elasticity of demand", "Elasticity of demand", "Income elasticity of demand", "Point elasticity of demand"], "ans": 0, "exp": "This specifically describes price elasticity of demand."}, {"type": "mcq", "q": "The percentage change in quantity demanded as a result of percentage change in price over a period is:", "opts": ["Price elasticity of demand", "Elasticity of demand", "Income elasticity of demand", "Point elasticity of demand"], "ans": 1, "exp": "This is the general formula description of elasticity of demand."}, {"type": "mcq", "q": "The general formula for calculating the coefficient of elasticity is \u0394Q/\u0394p \u00d7 Po/Qo.", "opts": ["True", "False"], "ans": 0, "exp": "This is the standard arc/point elasticity formula structure."}, {"type": "mcq", "q": "The two main approaches used in measuring price elasticity of demand are arc elasticity approach and ________.", "opts": ["Price elasticity of demand", "Elasticity", "Income elasticity", "Point elasticity"], "ans": 3, "exp": "Point elasticity is the other main approach alongside arc elasticity."}, {"type": "mcq", "q": "Measures the elasticity at a particular point along the demand curve:", "opts": ["Arc elasticity", "Elasticity of demand", "Arch elasticity", "Point elasticity"], "ans": 3, "exp": "Point elasticity measures elasticity at a single point on the curve."}, {"type": "mcq", "q": "Used when changes in price are small or infinitesimal:", "opts": ["Arc elasticity", "Elasticity of demand", "Arch elasticity", "Point elasticity"], "ans": 0, "exp": "Per the source answer key, arc elasticity is marked for this item."}, {"type": "mcq", "q": "The formula -\u0394Q/\u0394p \u00d7 P/Q is used for calculating:", "opts": ["Arc elasticity", "Elasticity of demand", "Arch elasticity", "Point elasticity"], "ans": 3, "exp": "This is the point elasticity formula."}, {"type": "mcq", "q": "Measures the coefficient of price elasticity between two points:", "opts": ["Arc elasticity", "Elasticity of demand", "Arch elasticity", "Point elasticity"], "ans": 0, "exp": "Arc elasticity measures elasticity between two points on a demand curve."}, {"type": "mcq", "q": "The formula Ep = (\u03b4Q/\u03b4P) \u00d7 (P2+P1)/(Q2+Q1) is used in calculating:", "opts": ["Arc elasticity", "Elasticity of demand", "Arch elasticity", "Point elasticity"], "ans": 0, "exp": "This midpoint-style formula is the arc elasticity formula."}, {"type": "mcq", "q": "The degree of responsiveness of demand in response to a change in income is:", "opts": ["Price elasticity of demand", "Elasticity of demand", "Income elasticity of demand", "Point elasticity of demand"], "ans": 2, "exp": "This describes income elasticity of demand."}, {"type": "mcq", "q": "Normal goods are goods whose quantity demanded increases as income increases.", "opts": ["True", "False"], "ans": 0, "exp": "This is the definition of normal goods."}, {"type": "mcq", "q": "If the coefficient of income elasticity for a good is greater than unity, the good is considered a:", "opts": ["Necessity", "Luxury", "Inferior good", "Giffen good"], "ans": 1, "exp": "An income elasticity coefficient greater than 1 indicates a luxury good."}, {"type": "mcq", "q": "If the coefficient of income elasticity is less than unity, the good is considered a:", "opts": ["Necessity", "Luxury", "Inferior good", "Giffen good"], "ans": 0, "exp": "An income elasticity coefficient less than 1 indicates a necessity."}, {"type": "mcq", "q": "The responsiveness of quantity demanded of commodity A in relation to the price of commodity B is:", "opts": ["Price elasticity of demand", "Cross elasticity", "Income elasticity of demand", "Point elasticity of demand"], "ans": 1, "exp": "This describes cross elasticity of demand."}, {"type": "mcq", "q": "The creation of utility in economics is known as:", "opts": ["Production", "Economic activities", "Quality", "None of the above"], "ans": 0, "exp": "Production is defined as the creation of utility."}, {"type": "mcq", "q": "Anyone who in any way increases utility is a:", "opts": ["Supplier", "Bargainer", "Producer", "Consumer"], "ans": 2, "exp": "A producer is anyone who increases utility."}, {"type": "mcq", "q": "Which form of capital does NOT change its form in the production process?", "opts": ["Circulating capital", "Personal capital", "Fixed capital", "Private capital"], "ans": 2, "exp": "Fixed capital (e.g. machinery, buildings) does not change form in production."}, {"type": "mcq", "q": "Which form of capital completely changes its form in the production process?", "opts": ["Circulating capital", "Personal capital", "Fixed capital", "Private capital"], "ans": 0, "exp": "Circulating capital (e.g. raw materials) is transformed during production."}, {"type": "mcq", "q": "The wealth inherent in the individual (e.g. skills) is:", "opts": ["Circulating capital", "Personal capital", "Fixed capital", "Private capital"], "ans": 1, "exp": "Personal capital refers to wealth/skills inherent in an individual."}, {"type": "mcq", "q": "Which is NOT a factor that affects capital formation?", "opts": ["Savings", "Population growth", "Government policy", "None of the above"], "ans": 3, "exp": "Savings, population growth, and government policy all affect capital formation, so none of the above is the exception."}, {"type": "mcq", "q": "________ is the means of valuation and payment in a system.", "opts": ["Money", "Credit", "Capital", "Wealth"], "ans": 0, "exp": "Money is the means of valuation and payment."}, {"type": "mcq", "q": "Which is NOT among the historical developments of money?", "opts": ["Commodity money", "Token coins", "Metallic money", "Bank notes"], "ans": 1, "exp": "Token coins is the odd one out among the listed historical stages; commodity money, metallic money and bank notes are the standard historical progression."}, {"type": "mcq", "q": "The issue of bank notes backed by government securities is referred to as:", "opts": ["Security issue", "Economy issue", "Fiduciary issue", "Scarcity issue"], "ans": 2, "exp": "This is called a fiduciary issue."}, {"type": "mcq", "q": "The notes and coins issued by the central bank of a country constitute the ________ for that country.", "opts": ["Currency", "Legal tender", "Fiduciary issue", "Public debt"], "ans": 0, "exp": "This constitutes the currency of that country."}, {"type": "mcq", "q": "Any means of payment that a debtor can legally compel a creditor to accept is:", "opts": ["Currency", "Legal tender", "Fiduciary issue", "Token money"], "ans": 1, "exp": "This is the definition of legal tender."}, {"type": "mcq", "q": "Which is NOT among the motives for holding money?", "opts": ["Business motive", "Transaction motive", "Precautionary motive", "Speculative motive"], "ans": 0, "exp": "Transaction, precautionary and speculative motives are the classic Keynesian motives; 'business motive' is not one of them."}, {"type": "mcq", "q": "The two extreme situations in which changes in price level greatly affect the value of money are known as inflation and:", "opts": ["Deflation", "Recession", "Devaluation", "Depression"], "ans": 0, "exp": "Inflation and deflation are the two extreme price-level situations."}, {"type": "mcq", "q": "Used to signify the ease with which an asset can be converted at its full value into money:", "opts": ["Liquidity", "Rate of interest", "Legal tender", "Fiduciary issue"], "ans": 0, "exp": "This is the definition of liquidity."}, {"type": "mcq", "q": "The reward for parting with liquidity is:", "opts": ["Legal tender", "Rate of interest", "Fiduciary issue", "Currency"], "ans": 1, "exp": "The rate of interest is the reward for parting with liquidity."}, {"type": "mcq", "q": "Any form of institution doing bona fide banking business has been legally defined as a:", "opts": ["Bank", "Microfinance bank", "Commercial bank", "Mortgage bank"], "ans": 2, "exp": "A commercial bank is legally defined this way."}, {"type": "mcq", "q": "Can also be defined as a dealer in money and credit:", "opts": ["Bank", "Microfinance bank", "Commercial bank", "Mortgage bank"], "ans": 2, "exp": "A commercial bank is a dealer in money and credit."}, {"type": "mcq", "q": "The main objective of any commercial bank is:", "opts": ["Profit making", "Social welfare", "Government control", "Currency issue"], "ans": 0, "exp": "Profit making is the main objective of commercial banks."}, {"type": "mcq", "q": "All the following are functions of commercial banks EXCEPT:", "opts": ["Discounting bills of exchange", "Agents of payment", "Agent of government", "None of the above"], "ans": 3, "exp": "Discounting bills, agents of payment and agent of government are all functions of commercial banks, so none of the above is the exception."}, {"type": "mcq", "q": "Generally recognised as an institution which is the apex of the monetary and banking structure of a country:", "opts": ["Commercial bank", "Central banking", "Microfinance bank", "Mortgage bank"], "ans": 1, "exp": "This describes central banking."}, {"type": "mcq", "q": "Essentially a market that facilitates the borrowing and lending of short-term funds:", "opts": ["Short term marketing", "Money market", "Capital market", "Short term money funds"], "ans": 1, "exp": "This describes the money market."}, {"type": "mcq", "q": "Essentially a market that facilitates the borrowing and lending of medium and long-term loans and investment:", "opts": ["Long term marketing", "Money market", "Capital market", "Long term money funds"], "ans": 2, "exp": "This describes the capital market."}, {"type": "mcq", "q": "Simply means buying and selling of goods and services:", "opts": ["Trade", "Production", "Consumption", "Distribution"], "ans": 0, "exp": "This is the definition of trade."}, {"type": "mcq", "q": "Who propounded the theory of absolute advantage?", "opts": ["Lionel Robbins", "Adam Smith", "Alfred Marshal", "David Ricardo"], "ans": 1, "exp": "Adam Smith propounded the theory of absolute advantage."}, {"type": "mcq", "q": "Who used the concept of comparative advantage to explain his theory?", "opts": ["Lionel Robbins", "Adam Smith", "Alfred Marshal", "David Ricardo"], "ans": 3, "exp": "David Ricardo developed the theory of comparative advantage."}, {"type": "mcq", "q": "The relation between the prices of a nation's exports and the prices of its imports is called the nation's:", "opts": ["Balance of trade", "Terms of trade", "Balance of payment", "Exchange rate"], "ans": 1, "exp": "This is called the terms of trade."}, {"type": "mcq", "q": "A country's statement of income and expenditure on international trade for a year is called:", "opts": ["Balance of trade", "Terms of trade", "Balance of payment", "Exchange rate"], "ans": 2, "exp": "This describes the balance of payment."}, {"type": "mcq", "q": "Used to refer to the price of one currency in terms of another:", "opts": ["Balance of trade", "Terms of trade", "Balance of payment", "Exchange rate"], "ans": 3, "exp": "This is the definition of the exchange rate."}, {"type": "mcq", "q": "The best known standard under which the exchange rate is fixed is:", "opts": ["Money standard", "Currency standard", "Gold standard", "All of the above"], "ans": 2, "exp": "The gold standard is the best-known standard for fixing exchange rates."}, {"type": "mcq", "q": "The deliberate use of government taxation, expenditure and borrowing to influence the level of economic activity is:", "opts": ["Monetary policy", "Fiscal policy", "Trade policy", "Exchange policy"], "ans": 1, "exp": "This is the definition of fiscal policy."}, {"type": "mcq", "q": "Fiscal policy is the core of:", "opts": ["Monetary economics", "Public finance", "International trade", "Microeconomics"], "ans": 1, "exp": "Fiscal policy is the core of public finance."}, {"type": "mcq", "q": "The main source of government revenue is:", "opts": ["Taxation", "Grants", "Borrowing", "Profits"], "ans": 0, "exp": "Taxation is the main source of government revenue."}, {"type": "mcq", "q": "Which is NOT a source of government revenue?", "opts": ["Grants", "Profits", "Rent, royalties, profit", "None of the above"], "ans": 3, "exp": "Grants, profits, and rent/royalties are all sources of government revenue, so none of the above is the exception."}, {"type": "mcq", "q": "A compulsory contribution to the public authority to meet its expenses and provide general benefit is a:", "opts": ["Tax", "Grant", "Loan", "Fine"], "ans": 0, "exp": "This is the definition of a tax."}, {"type": "mcq", "q": "The two main types of taxes are:", "opts": ["Progressive and regressive", "Direct and indirect", "Poll and specific", "Ad valorem and VAT"], "ans": 1, "exp": "Direct and indirect are the two main types of taxes."}, {"type": "mcq", "q": "Indirect taxes are:", "opts": ["Progressive", "Regressive", "Proportional", "None of the above"], "ans": 1, "exp": "Indirect taxes are generally regressive."}, {"type": "mcq", "q": "A tax levied equally on everybody, usually per adult male, irrespective of income or wealth is called:", "opts": ["A value added tax", "Ad valorem tax", "Poll tax", "Specific tax"], "ans": 2, "exp": "This is the definition of a poll tax."}, {"type": "mcq", "q": "A fixed sum imposed on a commodity (especially an imported one) irrespective of its value is:", "opts": ["A value added tax", "Ad valorem tax", "Poll tax", "Specific tax"], "ans": 3, "exp": "This is a specific tax."}, {"type": "mcq", "q": "A tax levied on the gain from the sale of capital assets such as stocks and shares is called:", "opts": ["A value added tax", "Ad valorem tax", "Poll tax", "Specific tax"], "ans": 1, "exp": "This is an ad valorem tax."}, {"type": "mcq", "q": "A tax imposed on a commodity at each stage of its production or distribution is called:", "opts": ["A value added tax", "Ad valorem tax", "Poll tax", "Specific tax"], "ans": 0, "exp": "This describes a Value Added Tax (VAT)."}, {"type": "mcq", "q": "Which is NOT among the systems of taxation?", "opts": ["Progressive", "Regressive", "Incidence", "Proportional"], "ans": 2, "exp": "Incidence of taxation is not a system of taxation \u2014 it's a separate concept about who bears the tax burden."}, {"type": "mcq", "q": "Taxes placed on goods and services are:", "opts": ["Direct taxes", "Indirect taxes", "Progressive taxes", "Poll taxes"], "ans": 1, "exp": "Indirect taxes are placed on goods and services."}, {"type": "mcq", "q": "Taxes paid only when goods and services are bought are:", "opts": ["Direct taxes", "Indirect taxes", "Progressive taxes", "Poll taxes"], "ans": 1, "exp": "Indirect taxes are paid only upon purchase of goods/services."}, {"type": "mcq", "q": "Taxes paid on the basis of one's income or wealth are:", "opts": ["Direct taxes", "Indirect taxes", "Progressive taxes", "Poll taxes"], "ans": 0, "exp": "Direct taxes are based on income or wealth."}, {"type": "mcq", "q": "Simply means the final resting place of a tax burden:", "opts": ["Progressive taxation", "Regressive taxation", "Incidence of taxation", "Proportional taxation"], "ans": 2, "exp": "This is the definition of incidence of taxation."}, {"type": "mcq", "q": "Compels all tax payers, rich or poor, to surrender the same percentage of income in tax:", "opts": ["Progressive taxation", "Regressive taxation", "Incidence of taxation", "Proportional taxation"], "ans": 3, "exp": "Proportional taxation uses the same percentage regardless of income level."}, {"type": "mcq", "q": "So graduated that its rate rises as the income of the tax payer increases:", "opts": ["Progressive taxation", "Regressive taxation", "Incidence of taxation", "Proportional taxation"], "ans": 0, "exp": "Progressive taxation has rising rates as income rises."}, {"type": "mcq", "q": "A financial statement of government on estimated revenue and expenditure for a fiscal year is a:", "opts": ["Budget", "Balance sheet", "Ledger", "Trial balance"], "ans": 0, "exp": "This is the definition of a budget."}, {"type": "mcq", "q": "Expenditure on major projects like airports, hospitals, roads or a university is referred to as:", "opts": ["Recurrent expenditure", "Capital expenditure", "Public debt", "Fiscal deficit"], "ans": 1, "exp": "This is capital expenditure."}, {"type": "mcq", "q": "The total borrowing by government or public authority at home and overseas is:", "opts": ["Fiscal deficit", "Public debt", "Capital expenditure", "Balance of payment"], "ans": 1, "exp": "This is the definition of public debt."}, {"type": "mcq", "q": "Public debt may be grouped into:", "opts": ["Direct and indirect", "Internal and external", "Short-term and long-term", "Fixed and circulating"], "ans": 1, "exp": "Public debt is grouped into internal and external debt."}, {"type": "mcq", "q": "Refers to the unpaid portion of external resources acquired for development purposes that could not be repaid when due:", "opts": ["Internal debt", "External debt", "Fiscal debt", "Public debt"], "ans": 1, "exp": "This describes external debt."}, {"type": "mcq", "q": "Which is NOT a type of external debt?", "opts": ["Productive and unproductive debt", "Loans for socio-economic needs", "Marketable and non-marketable debts", "None of the options"], "ans": 3, "exp": "Productive/unproductive, loans for socio-economic needs, and marketable/non-marketable debts are all recognized types, so 'none of the options' is correct as the exception per the answer key."}, {"type": "mcq", "q": "Which is NOT a source of internal debt?", "opts": ["Merchant bank", "Commercial bank", "Central Bank of Nigeria", "Non-Bank Public"], "ans": 3, "exp": "Per the answer key, none of the listed options is the exception \u2014 all are valid sources of internal debt (the key marks 'None of the above' as correct)."}, {"type": "mcq", "q": "Which are instruments used for procuring domestic debt?", "opts": ["Treasury bills only", "Treasury certificates only", "Government development stock only", "Treasury bills, certificates, development stock and revenue bonds"], "ans": 3, "exp": "All listed instruments (treasury bills, certificates, development stock, revenue bonds) are used to procure domestic debt."}]}, {"id": "B", "title": "Key Terms Recall (Fill in the Blank)", "items": [{"type": "blank", "q": "___ is the interaction between the forces of demand and supply (price)", "ans": "Price / Price mechanism", "exp": "This is the price mechanism \u2014 the interaction of demand and supply forces."}, {"type": "blank", "q": "Economic ___ are simplified versions of real-life events", "ans": "Models", "exp": "Economic models are simplified representations of real-world events."}, {"type": "blank", "q": "Full employment is a problem of ___ economics", "ans": "Macro", "exp": "Full employment is studied under macroeconomics."}, {"type": "blank", "q": "___ is the root and natural cause of all economic problems", "ans": "Scarcity", "exp": "Scarcity is the fundamental cause of all economic problems."}, {"type": "blank", "q": "___ establishes a relationship between cause and effect", "ans": "Theory / Economics", "exp": "A theory (or economics itself) establishes cause-and-effect relationships."}, {"type": "blank", "q": "The law of diminishing returns is also known as the law of ___", "ans": "Variable proportion", "exp": "It is also called the law of variable proportion."}, {"type": "blank", "q": "___ is the study of people in the ordinary business of life", "ans": "Economics", "exp": "This is Alfred Marshal's definition of economics."}, {"type": "blank", "q": "Economics has ___ and ___ schools of thought", "ans": "Classical; Neo-classical", "exp": "The two schools mentioned are classical and neo-classical economics."}, {"type": "blank", "q": "The ___ curve has a negative slope", "ans": "Demand", "exp": "The demand curve slopes downward (negative slope)."}, {"type": "blank", "q": "___ resources are called free gifts of nature", "ans": "Natural", "exp": "Natural resources are considered free gifts of nature."}, {"type": "blank", "q": "___ can also be called natural resources", "ans": "Land", "exp": "Land is another name for natural resources in economics."}, {"type": "blank", "q": "The reward for labour is ___", "ans": "Wages and salary", "exp": "Labour is rewarded with wages and salaries."}, {"type": "blank", "q": "___ is paid for the use of natural resources", "ans": "Rent", "exp": "Rent is the payment for the use of land/natural resources."}, {"type": "blank", "q": "The isoquant curve is alike to the ___ curve", "ans": "Indifference", "exp": "The isoquant curve in production is analogous to the indifference curve in consumption."}, {"type": "blank", "q": "___ ability is rewarded by profit", "ans": "Entrepreneurial", "exp": "Entrepreneurial ability is rewarded with profit."}, {"type": "blank", "q": "A party is said to be ___ if a policy impairs his position", "ans": "Worse off", "exp": "This describes being 'worse off' from a policy change."}, {"type": "blank", "q": "The ___ criterion states that a change is desirable if it improves the position of one party and does not harm any other", "ans": "Pareto", "exp": "This is the Pareto criterion/efficiency."}, {"type": "blank", "q": "The aim of government in an economy is ___", "ans": "Welfare maximization", "exp": "Government's economic aim is welfare maximization."}, {"type": "blank", "q": "___ is the creation of utility", "ans": "Production", "exp": "Production is defined as the creation of utility."}, {"type": "blank", "q": "___ motive states that people desire to hold money for day-to-day transactions", "ans": "Transactionary (transaction)", "exp": "This is the transaction motive for holding money."}, {"type": "blank", "q": "___ inflation is also known as run-away inflation", "ans": "Galloping inflation", "exp": "Galloping (run-away) inflation is a very rapid rate of inflation."}, {"type": "blank", "q": "___ factor leads to changes in quantity demanded of a product", "ans": "Price", "exp": "A change in the price of the product itself changes quantity demanded (movement along the curve)."}, {"type": "blank", "q": "___ factors lead to a change in supply", "ans": "Shift (non-price) factors", "exp": "Non-price factors cause a shift of the supply curve."}, {"type": "blank", "q": "Ep between 0 and 1 (exclusive) is ___ demand", "ans": "Inelastic", "exp": "When elasticity is between 0 and 1, demand is inelastic."}, {"type": "blank", "q": "___ deals with the increase in per-capita income", "ans": "Economic growth", "exp": "Economic growth refers to rising per-capita income."}, {"type": "blank", "q": "In a free competitive market, ___ regulates the flow of goods and services from producers to consumers", "ans": "Price", "exp": "The price mechanism regulates the flow of goods/services in a free market."}, {"type": "blank", "q": "The theory of demand is also known as the theory of ___", "ans": "Consumption", "exp": "Demand theory is also called the theory of consumption."}, {"type": "blank", "q": "The theory of supply is also known as the theory of ___", "ans": "Production", "exp": "Supply theory is also called the theory of production."}, {"type": "blank", "q": "Demand for ___ goods falls as income of consumers rises", "ans": "Inferior", "exp": "Demand for inferior goods falls as income rises."}, {"type": "blank", "q": "___ science deals with 'what is'", "ans": "Positive", "exp": "Positive economics deals with objective, factual statements ('what is')."}, {"type": "blank", "q": "___ science deals with 'what ought to be'", "ans": "Normative", "exp": "Normative economics deals with value judgments ('what ought to be')."}, {"type": "blank", "q": "P = AR = AVC means ___", "ans": "Loss (shut-down point in short run)", "exp": "When price equals average revenue and average variable cost, the firm is at a loss/shut-down situation."}, {"type": "blank", "q": "P = AR > ATC means ___", "ans": "Abnormal profit", "exp": "When price exceeds average total cost, the firm earns abnormal (supernormal) profit."}, {"type": "blank", "q": "P = AR < AVC means ___", "ans": "Total shut-down point", "exp": "When price is below average variable cost, the firm should shut down."}, {"type": "blank", "q": "P = AR = ATC means ___", "ans": "Normal profit", "exp": "When price equals average total cost, the firm earns normal profit."}, {"type": "blank", "q": "___ started through consumer analysis", "ans": "Consumer behaviour theory", "exp": "The theory of consumer behaviour begins with analysis of the consumer."}, {"type": "blank", "q": "According to the theory of price discrimination, selling the same article produced under the same control at different prices to different buyers is called price ___", "ans": "Discrimination", "exp": "This describes price discrimination."}, {"type": "blank", "q": "___ is the enjoyment of necessary resources for a worthwhile life", "ans": "Welfare", "exp": "Welfare is defined as enjoyment of resources for a worthwhile life."}, {"type": "blank", "q": "___ refers to human efforts, both physical and mental", "ans": "Labour", "exp": "Labour is human effort, physical and mental."}, {"type": "blank", "q": "A ___ resource can be drawn upon indefinitely if used conservatively", "ans": "Renewable", "exp": "Renewable resources can be used indefinitely if conserved."}, {"type": "blank", "q": "Market clearance is also referred to as ___", "ans": "Equilibrium", "exp": "Market clearance means the market is at equilibrium."}, {"type": "blank", "q": "Ceteris paribus, the ___ for a product will fall at a higher price", "ans": "Demand", "exp": "Holding other things constant, demand falls as price rises (law of demand)."}, {"type": "blank", "q": "Demand can be individual or ___ demand", "ans": "Market", "exp": "Demand is classified as individual demand or market demand."}, {"type": "blank", "q": "The demand schedule is used to plot the ___", "ans": "Demand (Dd) curve", "exp": "A demand schedule's data is plotted to form the demand curve."}, {"type": "blank", "q": "Jointly demanded goods are ___", "ans": "Complementary goods", "exp": "Goods demanded together are complementary goods."}, {"type": "blank", "q": "The vertical line of a demand curve represents ___ while the horizontal line represents ___", "ans": "Price; Quantity demanded", "exp": "Conventionally price is on the vertical axis and quantity on the horizontal axis."}, {"type": "blank", "q": "Marginal rate of substitution relates to ___ and marginal rate of technical substitution relates to ___", "ans": "Consumption; Production", "exp": "MRS applies to consumer theory, MRTS applies to production theory."}, {"type": "blank", "q": "A one-person economy is called the ___ economy", "ans": "Crusoe (Robinson Crusoe) economy", "exp": "A single-person economy is called a Crusoe economy."}, {"type": "blank", "q": "A party is said to be ___ if a policy improves its position", "ans": "Better-off", "exp": "This describes being 'better off' from a policy."}, {"type": "blank", "q": "Transitivity is ___", "ans": "Consistency", "exp": "Transitivity in consumer theory reflects consistency of preferences."}, {"type": "blank", "q": "The excess of demand over supply is ___", "ans": "Shortage", "exp": "Excess demand over supply creates a shortage."}, {"type": "blank", "q": "The excess of supply over demand is ___", "ans": "Surplus", "exp": "Excess supply over demand creates a surplus."}, {"type": "blank", "q": "Additional satisfaction is ___", "ans": "Marginal utility", "exp": "Marginal utility is the additional satisfaction from consuming one more unit."}, {"type": "blank", "q": "Absence of transport cost/barriers can be found in ___", "ans": "Perfect competitive market", "exp": "Perfect competition assumes no transport costs/barriers between buyers and sellers."}, {"type": "blank", "q": "Heterogeneous product is found under ___", "ans": "Oligopoly / Monopolistic competition", "exp": "Heterogeneous (differentiated) products are typical of oligopoly and monopolistic competition."}, {"type": "blank", "q": "___ is a price giver", "ans": "Monopoly", "exp": "A monopolist is a price maker/giver, not a price taker."}, {"type": "blank", "q": "___ is a price taker", "ans": "Perfect market (perfect competition)", "exp": "Firms in perfect competition are price takers."}, {"type": "blank", "q": "___ shows the maximum amount of goods and services that can be produced by a society", "ans": "Production possibility curve", "exp": "This is the definition of the production possibility curve (PPC)."}, {"type": "blank", "q": "___ and ___ are the forces of the market", "ans": "Demand; Supply", "exp": "Demand and supply are the two basic market forces."}, {"type": "blank", "q": "There is preferential treatment in ___ market", "ans": "Imperfect market", "exp": "Imperfect markets allow for preferential treatment (unlike perfect competition)."}, {"type": "blank", "q": "___ is an imperfect market in which there are only two producers of the same commodity", "ans": "Duopoly", "exp": "A duopoly has exactly two producers/sellers."}, {"type": "blank", "q": "Barrier to entry for other firms is a characteristic of ___", "ans": "Oligopoly", "exp": "Barriers to entry are a key feature of oligopoly."}, {"type": "blank", "q": "___ means scale of production", "ans": "Economies of scale", "exp": "This refers to economies of scale."}, {"type": "blank", "q": "___ shows the possible combinations of two commodities that give the same level of satisfaction", "ans": "Indifference curve", "exp": "This is the definition of an indifference curve."}, {"type": "blank", "q": "___ does not determine a shift or change in demand", "ans": "Price (of the good itself)", "exp": "A change in the good's own price causes movement along the curve, not a shift."}, {"type": "blank", "q": "___ does not determine a shift or change in supply", "ans": "Price (of the good itself)", "exp": "A change in the good's own price causes movement along the supply curve, not a shift."}, {"type": "blank", "q": "A shift or change in demand and supply is determined by other factors except ___", "ans": "Price", "exp": "Non-price factors shift the curves; price changes cause movement along them."}, {"type": "blank", "q": "Cardinal utility is measured in ___", "ans": "Utils", "exp": "Cardinal utility theory measures satisfaction in 'utils'."}, {"type": "blank", "q": "Ordinal utility is measured in ___", "ans": "Ranks", "exp": "Ordinal utility theory ranks preferences rather than measuring them numerically."}, {"type": "blank", "q": "___ is the beauty of capitalism", "ans": "Competition", "exp": "Competition is considered the defining strength of capitalism."}, {"type": "blank", "q": "Overall / aggregate equilibrium is studied in ___", "ans": "Macroeconomics", "exp": "Aggregate/overall equilibrium is a macroeconomics concept."}, {"type": "blank", "q": "___ deals with value judgement or what economics ought to be", "ans": "Normative economics", "exp": "This is normative economics."}, {"type": "blank", "q": "___ shows the mathematical relationship between input and output", "ans": "Production function", "exp": "This is the definition of a production function."}, {"type": "blank", "q": "Partial equilibrium is studied in ___", "ans": "Microeconomics", "exp": "Partial equilibrium analysis belongs to microeconomics."}, {"type": "blank", "q": "The two types of reasoning are ___ and ___", "ans": "Deductive; Inductive", "exp": "Deductive and inductive reasoning are the two main types."}, {"type": "blank", "q": "Economies of scale can be ___ and ___", "ans": "Small scale; Large scale", "exp": "Economies of scale can occur at small or large scale of production."}]}, {"id": "C", "title": "ECN 214 Mid-Semester Test I (T/F & MCQ)", "items": [{"type": "tf", "q": "If there were no scarcity, economics would still give valuable insights.", "ans": false, "exp": "If there were no scarcity, there would be no economic problem to study \u2014 economics is fundamentally the study of choice under scarcity."}, {"type": "tf", "q": "When economists say 'There is no such thing as a free lunch,' they mean that all economic decisions involve trade-offs.", "ans": true, "exp": "Every choice involves giving something up \u2014 that is the essence of a trade-off."}, {"type": "tf", "q": "The expected value of a variable is the sum of all possible values which this variable can take, weighted with the probability that the variable takes each value.", "ans": true, "exp": "This is the standard statistical definition of expected value."}, {"type": "tf", "q": "Rational people act only when the marginal benefit of the action exceeds the marginal cost.", "ans": true, "exp": "Rational decision-making compares marginal benefit to marginal cost; action is taken only when benefit exceeds cost."}, {"type": "tf", "q": "If the opportunity cost of going to prison for some person falls, this person is less likely to commit a criminal act.", "ans": false, "exp": "A lower opportunity cost of prison makes crime relatively more attractive, so the person is MORE likely, not less likely, to commit the act."}, {"type": "tf", "q": "When there are more policemen on the ground, the probability of getting caught when committing a crime increases, hence the expected cost of committing a crime increases as well.", "ans": true, "exp": "More policing raises the probability of being caught, which raises the expected cost of crime."}, {"type": "tf", "q": "Rioting can be explained as a 'tipping-point' phenomenon.", "ans": true, "exp": "Rioting is often modeled as a tipping-point/threshold phenomenon in economics and social science."}, {"type": "tf", "q": "An unintended consequence of public support for higher education is that low tuition provides an incentive for many people to attend state universities even if they have no desire to learn anything.", "ans": true, "exp": "This is a classic unintended-consequences argument about subsidized tuition."}, {"type": "tf", "q": "Sue is better at cleaning and Bob is better at cooking. It will take fewer hours to eat and clean if Bob specializes in cooking and Sue specializes in cleaning than if they share the household duties evenly.", "ans": true, "exp": "This illustrates the gains from specialization based on comparative/absolute advantage."}, {"type": "tf", "q": "Scientists collect and analyze data to verify or refute their theories.", "ans": true, "exp": "This describes the basic scientific method."}, {"type": "tf", "q": "A successful scientist formulates theories such that under no circumstances can they be falsified.", "ans": false, "exp": "A good scientific theory must be falsifiable \u2014 capable of being tested and potentially refuted."}, {"type": "tf", "q": "A car manufacturer should continue to produce additional cars as long as the firm is profitable, even if the cost of the additional units exceeds the price received.", "ans": false, "exp": "A firm should stop producing additional units once marginal cost exceeds price/marginal revenue, regardless of overall profitability."}, {"type": "tf", "q": "To the statistician, CAUSE is essentially the same thing as CORRELATION.", "ans": false, "exp": "Correlation does not imply causation \u2014 this is a basic statistical principle."}, {"type": "tf", "q": "To a student, the opportunity cost of going to a football match would include the price of the ticket and the value of the time that could have been spent studying.", "ans": true, "exp": "Opportunity cost includes both direct monetary cost and the value of foregone alternatives (like study time)."}, {"type": "tf", "q": "In a natural experiment, some exogenous force (i.e. something which is itself unaffected by what we want to explain) changes only the factor which the econometrician believes to be the cause of some observed result.", "ans": true, "exp": "This is the standard definition of a natural experiment in econometrics."}, {"type": "mcq", "q": "Which of the following involves a trade-off?", "opts": ["Taking a nap", "All of these answers involve trade-offs", "Watching a football game on Saturday afternoon", "Going to university"], "ans": 1, "exp": "Every listed activity involves giving up time/resources that could be used elsewhere \u2014 all involve trade-offs."}, {"type": "mcq", "q": "Trade-offs are required because wants are unlimited and resources are:", "opts": ["Economical", "Unlimited", "Efficient", "Scarce"], "ans": 3, "exp": "Resources are scarce relative to unlimited wants, which is why trade-offs are necessary."}, {"type": "mcq", "q": "Economics is the study of:", "opts": ["How society manages its unlimited resources", "How to reduce our wants until we are satisfied", "How society manages its scarce resources", "How to fully satisfy our unlimited wants"], "ans": 2, "exp": "Economics studies how society manages its scarce resources to satisfy unlimited wants."}, {"type": "mcq", "q": "A rational person does not act unless:", "opts": ["The action is ethical", "The action produces marginal costs that exceed marginal benefits", "The action produces marginal benefits that exceed marginal costs", "The action makes money for the person"], "ans": 2, "exp": "Rational people act only when marginal benefits exceed marginal costs."}, {"type": "mcq", "q": "Suppose you find \u20a620. If you choose to use the \u20a620 to go to a football match, your opportunity cost of the game is:", "opts": ["Nothing, because you found the money", "\u20a620 (because you could have used it to buy other things) plus the value of your time spent at the game", "\u20a620 plus the value of your time plus the cost of dinner at the game", "None of these answers"], "ans": 1, "exp": "Opportunity cost includes the money itself (which could buy other things) plus the value of the time spent at the game."}, {"type": "mcq", "q": "Which of the following is NOT part of the opportunity cost of going on holiday?", "opts": ["The money you spent on a theatre show there", "The money you could have made if you had stayed home and worked", "The money you spent on food", "The money you spent on airline tickets"], "ans": 2, "exp": "You would have spent money on food regardless of the holiday, so it is not part of the opportunity cost of going."}, {"type": "mcq", "q": "Which of the following statements is true about a market economy?", "opts": ["With a large enough computer, central planners could guide production more efficiently than markets", "In a market, the self-interested actions of market participants are co-ordinated in a way that brings about an outcome from which everybody benefits", "The strength of a market system is that it distributes resources evenly across consumers", "Taxes help prices communicate costs and benefits to producers and consumers"], "ans": 1, "exp": "This describes Adam Smith's 'invisible hand' \u2014 self-interested actions in a market are coordinated to produce mutually beneficial outcomes."}, {"type": "mcq", "q": "You are planning to run a hot dog stand. You originally estimated sales revenue of \u20a62000 and have already spent \u20a61000 building the stand. You now estimate total sales at only \u20a6800, but can complete the stand for another \u20a6300 (hot dogs are costless). Should you complete the stand?", "opts": ["There is not enough information to answer this question", "Yes", "No"], "ans": 1, "exp": "The \u20a61000 already spent is a sunk cost and irrelevant. Comparing only the additional \u20a6300 cost to the \u20a6800 expected revenue, you should complete the stand since 800 > 300."}, {"type": "mcq", "q": "Using the same hot dog stand scenario, your decision rule should be to complete the stand as long as the cost to complete is less than:", "opts": ["\u20a6300", "\u20a6100", "\u20a6500", "None of these answers", "\u20a6800"], "ans": 4, "exp": "You should complete the stand as long as the additional cost is less than the expected additional revenue of \u20a6800 (ignoring the sunk \u20a61000 already spent)."}, {"type": "mcq", "q": "An increase (rightward shift) in the demand for a good will tend to cause:", "opts": ["An increase in the equilibrium price and a decrease in the equilibrium quantity", "None of these answers", "An increase in the equilibrium price and an increase in the equilibrium quantity", "A decrease in the equilibrium price and quantity", "A decrease in the equilibrium price and an increase in the equilibrium quantity"], "ans": 2, "exp": "A rightward shift in demand raises both the equilibrium price and quantity, holding supply constant."}, {"type": "mcq", "q": "A decrease (leftward shift) in the supply of a good will tend to cause:", "opts": ["An increase in the equilibrium price and quantity", "A decrease in the equilibrium price and quantity", "None of these answers", "A decrease in the equilibrium price and an increase in the equilibrium quantity", "An increase in the equilibrium price and a decrease in the equilibrium quantity"], "ans": 4, "exp": "A leftward shift in supply raises the equilibrium price and lowers the equilibrium quantity, holding demand constant."}, {"type": "mcq", "q": "Suppose there is an increase in both the supply and demand for personal computers. We would expect:", "opts": ["The equilibrium quantity to rise and the equilibrium price to rise", "The equilibrium quantity to rise and the equilibrium price to fall", "The equilibrium quantity to rise and the equilibrium price to remain constant", "The change in equilibrium quantity to be ambiguous and the equilibrium price to rise", "The equilibrium quantity to rise and the change in equilibrium price to be ambiguous"], "ans": 4, "exp": "When both supply and demand increase, equilibrium quantity definitely rises, but the effect on price depends on the relative size of the shifts \u2014 it is ambiguous."}, {"type": "mcq", "q": "Suppose supply increases MORE than demand for personal computers (both increasing). We would expect:", "opts": ["The change in equilibrium quantity to be ambiguous and the equilibrium price to fall", "The equilibrium quantity to rise and the equilibrium price to rise", "The equilibrium quantity to rise and the change in equilibrium price to be ambiguous", "The equilibrium quantity to rise and the equilibrium price to fall", "The equilibrium quantity to rise and the equilibrium price to remain constant"], "ans": 3, "exp": "When supply increases by more than demand, the equilibrium quantity rises and the equilibrium price falls."}]}];
+
+let selectedSections = new Set(SECTIONS.map(s=>s.id));
+let pool = [];
+let idx = 0;
+let score = 0;
+let answered = [];
+let shuffle = true;
+let currentAnswered = false;
+
+const secChoiceEl = document.getElementById('secChoice');
+function renderSetup(){
+  secChoiceEl.innerHTML = '';
+  SECTIONS.forEach(s=>{
+    const div = document.createElement('label');
+    div.className = 'sec-opt active';
+    div.innerHTML = `<input type="checkbox" checked data-id="${s.id}">
+      <div class="label">
+        <div class="name">Section ${s.id} — ${s.title}</div>
+        <div class="count">${s.items.length} questions</div>
+      </div>`;
+    const cb = div.querySelector('input');
+    cb.addEventListener('change', ()=>{
+      if(cb.checked){ selectedSections.add(s.id); div.classList.add('active'); }
+      else { selectedSections.delete(s.id); div.classList.remove('active'); }
+    });
+    secChoiceEl.appendChild(div);
+  });
+}
+renderSetup();
+
+function shuffleArr(a){
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+document.getElementById('startBtn').addEventListener('click', ()=>{
+  shuffle = document.getElementById('shuffleBox').checked;
+  pool = [];
+  SECTIONS.forEach(s=>{
+    if(selectedSections.has(s.id)){
+      s.items.forEach(it=>pool.push(Object.assign({secId:s.id, secTitle:s.title}, it)));
+    }
+  });
+  if(pool.length===0){ alert('Please select at least one section.'); return; }
+  if(shuffle) shuffleArr(pool);
+  idx = 0; score = 0; answered = [];
+  document.getElementById('setup').style.display='none';
+  document.getElementById('results').style.display='none';
+  document.getElementById('quiz').style.display='block';
+  renderQuestion();
+});
+
+function letterFor(i){ return String.fromCharCode(65+i); }
+
+function renderQuestion(){
+  currentAnswered = false;
+  const q = pool[idx];
+  document.getElementById('nextBtn').disabled = true;
+  document.getElementById('nextBtn').textContent = (idx===pool.length-1) ? 'Finish →' : 'Next Question →';
+  document.getElementById('qnum').textContent = `SECTION ${q.secId} · ${q.secTitle}`;
+  document.getElementById('qtext').textContent = q.q;
+  document.getElementById('explain').style.display='none';
+  document.getElementById('explainBody').innerHTML='';
+  const existingStamp = document.querySelector('.stamp-badge');
+  if(existingStamp) existingStamp.remove();
+
+  document.getElementById('metaLeft').textContent = `Question ${idx+1} of ${pool.length}`;
+  document.getElementById('metaRight').textContent = `Score: ${score} / ${answered.length}`;
+  document.getElementById('progressFill').style.width = ((idx)/pool.length*100)+'%';
+
+  const optsEl = document.getElementById('opts');
+  optsEl.innerHTML = '';
+
+  if(q.type==='mcq' || q.type==='tf'){
+    const opts = q.type==='tf' ? ['True','False'] : q.opts;
+    const ansIdx = q.type==='tf' ? (q.ans ? 0 : 1) : q.ans;
+    opts.forEach((optText,i)=>{
+      const div = document.createElement('div');
+      div.className='opt';
+      div.innerHTML = `<span class="letter">${letterFor(i)}</span><span>${optText}</span>`;
+      div.addEventListener('click', ()=>selectOption(i, ansIdx, div, q));
+      optsEl.appendChild(div);
+    });
+  } else if(q.type==='blank'){
+    const row = document.createElement('div');
+    row.className='blank-input-row';
+    row.innerHTML = `<input type="text" id="blankInput" placeholder="Type your answer, then press Reveal…" />`;
+    optsEl.appendChild(row);
+    const btn = document.createElement('button');
+    btn.className='btn secondary';
+    btn.style.marginTop='4px';
+    btn.textContent='Reveal Answer';
+    btn.addEventListener('click', ()=>revealBlank(q, btn));
+    optsEl.appendChild(btn);
+    document.getElementById('blankInput').addEventListener('keydown', (e)=>{
+      if(e.key==='Enter'){ e.preventDefault(); revealBlank(q, btn); }
+    });
+  }
+}
+
+function stampIt(card, isCorrect){
+  const badge = document.createElement('div');
+  badge.className = 'stamp-badge ' + (isCorrect?'correct':'wrong');
+  badge.textContent = isCorrect ? '✓ Correct' : '✗ Incorrect';
+  card.appendChild(badge);
+}
+
+function selectOption(i, ansIdx, el, q){
+  if(currentAnswered) return;
+  currentAnswered = true;
+  const isCorrect = (i===ansIdx);
+  if(isCorrect) score++;
+  answered.push({q:q.q, correct:isCorrect});
+
+  const allOpts = document.querySelectorAll('#opts .opt');
+  allOpts.forEach((o,idx2)=>{
+    o.classList.add('disabled-opt');
+    o.style.pointerEvents='none';
+    if(idx2===ansIdx) o.classList.add('correct');
+    else if(idx2===i) o.classList.add('wrong');
+    else o.classList.add('faded');
+  });
+
+  stampIt(document.getElementById('qcard'), isCorrect);
+  showExplain(q);
+  document.getElementById('metaRight').textContent = `Score: ${score} / ${answered.length}`;
+  document.getElementById('nextBtn').disabled = false;
+}
+
+function revealBlank(q, btn){
+  if(currentAnswered) return;
+  currentAnswered = true;
+  const input = document.getElementById('blankInput');
+  const userVal = (input.value||'').trim().toLowerCase();
+  const ansMain = q.ans.split(';')[0].split('/')[0].trim().toLowerCase();
+  const isCorrect = userVal.length>0 && (ansMain.includes(userVal) || userVal.includes(ansMain));
+  if(isCorrect) score++;
+  answered.push({q:q.q, correct:isCorrect});
+  input.disabled = true;
+  btn.disabled = true;
+  stampIt(document.getElementById('qcard'), isCorrect);
+  showExplain(q, true);
+  document.getElementById('metaRight').textContent = `Score: ${score} / ${answered.length}`;
+  document.getElementById('nextBtn').disabled = false;
+}
+
+function showExplain(q, isBlank){
+  const box = document.getElementById('explain');
+  const body = document.getElementById('explainBody');
+  let html = '';
+  if(isBlank){
+    html += `<div class="correct-ans">Correct answer: ${q.ans}</div>`;
+  }
+  html += `<div style="margin-top:6px;">${q.exp}</div>`;
+  body.innerHTML = html;
+  box.style.display='block';
+}
+
+document.getElementById('nextBtn').addEventListener('click', ()=>{
+  if(idx < pool.length-1){
+    idx++;
+    renderQuestion();
+  } else {
+    finishTest();
+  }
+});
+
+document.getElementById('quitBtn').addEventListener('click', ()=>{
+  if(confirm('End this session and see your results now?')) finishTest();
+});
+
+function finishTest(){
+  document.getElementById('quiz').style.display='none';
+  document.getElementById('results').style.display='block';
+  const total = answered.length;
+  const pct = total ? Math.round(score/total*100) : 0;
+  document.getElementById('scoreBig').textContent = pct+'%';
+  document.getElementById('scoreLine').textContent = `${score} of ${total} correct`;
+  let remark = '';
+  if(pct>=80) remark='Excellent — you clearly know your material.';
+  else if(pct>=60) remark='Good effort — review the misses below.';
+  else if(pct>=40) remark='Getting there — go over the explanations again.';
+  else remark='Keep practising — re-read the summary notes and try again.';
+  document.getElementById('scoreRemark').textContent = remark;
+
+  const list = document.getElementById('reviewList');
+  list.innerHTML = '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--ink-soft);margin-bottom:8px;">Question Review</div>';
+  answered.forEach((a,i)=>{
+    const row = document.createElement('div');
+    row.className='review-item';
+    row.innerHTML = `<span class="rmark ${a.correct?'ok':'no'}">${a.correct?'✓':'✗'}</span><span class="rq">${i+1}. ${a.q}</span>`;
+    list.appendChild(row);
+  });
+}
+
+document.getElementById('restartBtn').addEventListener('click', ()=>{
+  document.getElementById('results').style.display='none';
+  document.getElementById('setup').style.display='block';
+});
+</script>
+</body>
+</html>
