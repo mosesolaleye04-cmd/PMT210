@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PMT 210 / ECN 214 — CBT Practice Exam</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,500;0,600;0,700;1,500&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
+
+  :root{
+    --paper:#F5F1E6;
+    --paper-line:#d8cfb8;
+    --ink:#1c2b3a;
+    --ink-soft:#4a5a6a;
+    --navy:#1c2b3a;
+    --red:#a3311d;
+    --red-soft:#c1462f;
+    --green:#2f5d3a;
+    --green-soft:#e7efe4;
+    --red-bg:#f6e6e1;
+    --gold:#b8863b;
+    --card:#fffdf7;
+    --shadow: 0 2px 0 rgba(28,43,58,0.06), 0 12px 24px -16px rgba(28,43,58,0.35);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      repeating-linear-gradient(180deg, transparent, transparent 27px, var(--paper-line) 28px),
+      var(--paper);
+    color:var(--ink);
+    font-family:'Inter', system-ui, sans-serif;
+    min-height:100vh;
+    padding: 28px 16px 60px;
+  }
+  .wrap{max-width:840px;margin:0 auto;}
+
+  header.masthead{
+    display:flex; align-items:flex-end; justify-content:space-between;
+    border-bottom: 3px solid var(--ink);
+    padding-bottom:14px; margin-bottom:22px;
+    flex-wrap:wrap; gap:10px;
+  }
+  .masthead h1{
+    font-family:'Source Serif 4', serif;
+    font-weight:700; font-style:italic;
+    font-size:clamp(26px,5vw,34px);
+    margin:0; letter-spacing:0.2px;
+  }
+  .masthead .sub{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px; color:var(--ink-soft);
+    text-transform:uppercase; letter-spacing:1.5px;
+  }
+  .masthead .stamp{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px; color:var(--ink-soft);
+    border:1.5px solid var(--ink-soft); border-radius:3px;
+    padding:5px 9px; transform:rotate(-2deg);
+    white-space:nowrap;
+  }
+
+  /* SETUP SCREEN */
+  #setup .card{
+    background:var(--card); border:1px solid var(--paper-line);
+    border-radius:6px; padding:26px 24px; box-shadow:var(--shadow);
+  }
+  #setup h2{font-family:'Source Serif 4', serif; font-size:21px; margin:0 0 6px;}
+  #setup p.desc{color:var(--ink-soft); font-size:14.5px; line-height:1.55; margin:0 0 20px;}
+  .sec-choice{
+    display:flex; flex-direction:column; gap:10px; margin-bottom:22px;
+  }
+  .sec-opt{
+    display:flex; align-items:center; gap:12px;
+    border:1.5px solid var(--paper-line); border-radius:5px;
+    padding:13px 14px; cursor:pointer; background:#fffefb;
+    transition: border-color .15s, background .15s;
+  }
+  .sec-opt:hover{border-color:var(--gold);}
+  .sec-opt.active{border-color:var(--red-soft); background:var(--red-bg);}
+  .sec-opt input{accent-color:var(--red-soft); width:16px; height:16px;}
+  .sec-opt .label{flex:1;}
+  .sec-opt .name{font-weight:600; font-size:15px;}
+  .sec-opt .count{font-family:'IBM Plex Mono', monospace; font-size:12px; color:var(--ink-soft);}
+  .start-row{display:flex; align-items:center; gap:14px; flex-wrap:wrap;}
+  .btn{
+    font-family:'IBM Plex Mono', monospace; font-weight:600; font-size:13.5px;
+    letter-spacing:0.5px; text-transform:uppercase;
+    background:var(--ink); color:var(--paper);
+    border:none; border-radius:4px; padding:13px 22px;
+    cursor:pointer; transition: transform .1s, background .15s;
+  }
+  .btn:hover{background:#0f1926;}
+  .btn:active{transform:scale(0.98);}
+  .btn.secondary{background:transparent; color:var(--ink); border:1.5px solid var(--ink);}
+  .btn.secondary:hover{background:var(--ink); color:var(--paper);}
+  .btn:disabled{opacity:0.4; cursor:not-allowed;}
+  .shuffle-row{display:flex; align-items:center; gap:8px; font-size:13.5px; color:var(--ink-soft);}
+  .shuffle-row input{accent-color:var(--red-soft); width:15px; height:15px;}
+
+  /* QUIZ SCREEN */
+  #quiz{display:none;}
+  .progress-bar{
+    height:6px; background:var(--paper-line); border-radius:3px; overflow:hidden; margin-bottom:18px;
+  }
+  .progress-fill{height:100%; background:linear-gradient(90deg,var(--gold),var(--red-soft)); width:0%; transition:width .3s;}
+  .meta-row{
+    display:flex; justify-content:space-between; align-items:center;
+    font-family:'IBM Plex Mono', monospace; font-size:12.5px; color:var(--ink-soft);
+    margin-bottom:14px;
+  }
+  .qcard{
+    background:var(--card); border:1px solid var(--paper-line); border-radius:6px;
+    padding:26px 24px; box-shadow:var(--shadow); position:relative;
+  }
+  .qnum{
+    font-family:'IBM Plex Mono', monospace; font-size:12px; color:var(--gold);
+    text-transform:uppercase; letter-spacing:1.5px; margin-bottom:8px;
+  }
+  .qtext{
+    font-family:'Source Serif 4', serif; font-size:19px; line-height:1.5;
+    margin:0 0 20px; color:var(--ink);
+  }
+  .opts{display:flex; flex-direction:column; gap:10px;}
+  .opt{
+    display:flex; align-items:center; gap:12px;
+    border:1.5px solid var(--paper-line); border-radius:5px;
+    padding:12px 14px; cursor:pointer; background:#fffefb;
+    font-size:15px; transition: border-color .15s, background .15s, transform .1s;
+  }
+  .opt:hover{border-color:var(--gold); transform:translateX(2px);}
+  .opt .letter{
+    font-family:'IBM Plex Mono', monospace; font-weight:600; font-size:12.5px;
+    width:22px; height:22px; border-radius:50%; border:1.5px solid var(--ink-soft);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    color:var(--ink-soft);
+  }
+  .opt.correct{border-color:var(--green); background:var(--green-soft);}
+  .opt.correct .letter{background:var(--green); border-color:var(--green); color:#fff;}
+  .opt.wrong{border-color:var(--red-soft); background:var(--red-bg);}
+  .opt.wrong .letter{background:var(--red-soft); border-color:var(--red-soft); color:#fff;}
+  .opt.disabled-opt{cursor:default;}
+  .opt.faded{opacity:0.5;}
+
+  .blank-input-row{display:flex; gap:10px; margin-bottom:6px;}
+  .blank-input-row input[type=text]{
+    flex:1; font-family:'Inter',sans-serif; font-size:15px;
+    padding:12px 14px; border:1.5px solid var(--paper-line); border-radius:5px;
+    background:#fffefb; color:var(--ink);
+  }
+  .blank-input-row input[type=text]:focus{outline:none; border-color:var(--gold);}
+
+  .stamp-badge{
+    position:absolute; top:20px; right:22px;
+    font-family:'IBM Plex Mono', monospace; font-weight:700; font-size:12px;
+    letter-spacing:1px; text-transform:uppercase;
+    border:2.5px solid; border-radius:4px; padding:5px 10px;
+    transform:rotate(4deg);
+    animation: stampIn .22s ease-out;
+  }
+  .stamp-badge.correct{color:var(--green); border-color:var(--green);}
+  .stamp-badge.wrong{color:var(--red-soft); border-color:var(--red-soft);}
+  @keyframes stampIn{
+    from{transform:rotate(4deg) scale(1.6); opacity:0;}
+    to{transform:rotate(4deg) scale(1); opacity:1;}
+  }
+
+  .explain{
+    display:none; margin-top:18px; padding:14px 16px;
+    background:#f1ece0; border-left:3px solid var(--gold); border-radius:0 4px 4px 0;
+    font-size:14.5px; line-height:1.6; color:var(--ink);
+  }
+  .explain .exlabel{
+    font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:1px;
+    text-transform:uppercase; color:var(--gold); display:block; margin-bottom:5px; font-weight:600;
+  }
+  .explain .correct-ans{font-weight:600;}
+
+  .nav-row{
+    display:flex; justify-content:space-between; align-items:center;
+    margin-top:20px; gap:10px; flex-wrap:wrap;
+  }
+  .nav-row .left-btns, .nav-row .right-btns{display:flex; gap:10px;}
+
+  /* RESULTS */
+  #results{display:none;}
+  .score-card{
+    background:var(--card); border:1px solid var(--paper-line); border-radius:6px;
+    padding:34px 26px; text-align:center; box-shadow:var(--shadow);
+  }
+  .score-card .big{
+    font-family:'Source Serif 4', serif; font-weight:700; font-size:56px; color:var(--ink);
+  }
+  .score-card .grade-line{font-family:'IBM Plex Mono',monospace; color:var(--ink-soft); margin-top:6px; font-size:13px; letter-spacing:1px; text-transform:uppercase;}
+  .score-card .remark{margin-top:14px; font-family:'Source Serif 4', serif; font-style:italic; font-size:17px; color:var(--red-soft);}
+  .review-list{margin-top:26px; text-align:left;}
+  .review-item{
+    border-bottom:1px solid var(--paper-line); padding:12px 4px; font-size:13.5px;
+    display:flex; gap:10px; align-items:flex-start;
+  }
+  .review-item .rmark{font-weight:700; width:20px; flex-shrink:0;}
+  .review-item .rmark.ok{color:var(--green);}
+  .review-item .rmark.no{color:var(--red-soft);}
+  .review-item .rq{color:var(--ink-soft);}
+  footer.credit{
+    text-align:center; margin-top:30px; font-family:'IBM Plex Mono',monospace;
+    font-size:11px; color:var(--ink-soft); letter-spacing:0.5px;
+  }
+  @media(max-width:520px){
+    .qtext{font-size:17px;}
+    .score-card .big{font-size:44px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <div>
+      <h1>PMT 210 &nbsp;/&nbsp; ECN 214</h1>
+      <div class="sub">Computer-Based Test &middot; Principles of Economics</div>
+    </div>
+    <div class="stamp">FUTA &middot; Practice Session</div>
+  </header>
+
+  <section id="setup">
+    <div class="card">
+      <h2>Set up your practice session</h2>
+      <p class="desc">Choose which question sets to include. Every question reveals the correct answer and a short explanation the moment you pick a choice — so you can learn as you go, not just at the end.</p>
+
+      <div class="sec-choice" id="secChoice"></div>
+
+      <div class="start-row">
+        <button class="btn" id="startBtn">Start Test</button>
+        <label class="shuffle-row"><input type="checkbox" id="shuffleBox" checked> Shuffle questions</label>
+      </div>
+    </div>
+  </section>
+
+  <section id="quiz">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="meta-row">
+      <span id="metaLeft">Question 1 of 1</span>
+      <span id="metaRight">Score: 0 / 0</span>
+    </div>
+    <div class="qcard" id="qcard">
+      <div class="qnum" id="qnum">SECTION A</div>
+      <p class="qtext" id="qtext"></p>
+      <div class="opts" id="opts"></div>
+      <div class="explain" id="explain">
+        <span class="exlabel">Explanation</span>
+        <div id="explainBody"></div>
+      </div>
+      <div class="nav-row">
+        <div class="left-btns">
+          <button class="btn secondary" id="quitBtn">End Session</button>
+        </div>
+        <div class="right-btns">
+          <button class="btn" id="nextBtn" disabled>Next Question →</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="results">
+    <div class="score-card">
+      <div class="big" id="scoreBig">0%</div>
+      <div class="grade-line" id="scoreLine">0 of 0 correct</div>
+      <div class="remark" id="scoreRemark"></div>
+      <div class="start-row" style="justify-content:center; margin-top:22px;">
+        <button class="btn" id="restartBtn">Take Another Session</button>
+      </div>
+      <div class="review-list" id="reviewList"></div>
+    </div>
+  </section>
+
+  <footer class="credit">Compiled from PMT 210 / ECN 214 study materials · for self-practice only</footer>
+</div>
+
+<script>
+const SECTIONS = [
+  {
+    "id": "A",
+    "title": "Basic Principles of Economics (MCQ)",
+    "items": [
+      {
+        "type": "mcq",
+        "q": "Who defined economics as a practical science of production and distribution of wealth?",
+        "opts": ["Alfred Marshall", "Adam Smith", "John Maynard Keynes", "David Ricardo"],
+        "ans": 0,
+        "exp": "Alfred Marshall defined economics as a science that studies production, distribution and consumption of wealth. This definition emphasized the practical aspects of economic activity."
+      },
+      {
+        "type": "mcq",
+        "q": "The law of demand states that:",
+        "opts": ["Price increases as demand decreases", "Quantity demanded increases as price decreases", "Supply increases with demand", "Price equals quantity supplied"],
+        "ans": 1,
+        "exp": "The law of demand indicates an inverse relationship between price and quantity demanded. As price falls, quantity demanded rises, and vice versa, assuming all other factors remain constant."
+      },
+      {
+        "type": "mcq",
+        "q": "What is the opportunity cost of a decision?",
+        "opts": ["The total money spent on the choice", "The benefit foregone from the next best alternative", "The profit gained from the choice", "The time taken to make the choice"],
+        "ans": 1,
+        "exp": "Opportunity cost refers to the value of the next best alternative foregone when making a choice. It reflects the true economic cost of any decision."
+      },
+      {
+        "type": "mcq",
+        "q": "Which of the following is an example of a free good?",
+        "opts": ["Manufactured cars", "Agricultural land", "Air in the atmosphere", "Minerals from the earth"],
+        "ans": 2,
+        "exp": "A free good is one that exists in unlimited supply relative to demand and requires no production effort to obtain. Air in the atmosphere is a classic example of a free good."
+      }
+    ]
+  },
+  {
+    "id": "B",
+    "title": "Microeconomics Concepts (MCQ)",
+    "items": [
+      {
+        "type": "mcq",
+        "q": "At the point of equilibrium in a market:",
+        "opts": ["Quantity demanded exceeds quantity supplied", "Quantity supplied exceeds quantity demanded", "Quantity demanded equals quantity supplied", "Price equals zero"],
+        "ans": 2,
+        "exp": "Market equilibrium occurs where quantity demanded equals quantity supplied, and the market clears at the equilibrium price. There is no tendency for price to change."
+      },
+      {
+        "type": "mcq",
+        "q": "The elasticity of demand measures:",
+        "opts": ["The absolute change in price", "The responsiveness of quantity demanded to price changes", "The total revenue generated", "The cost of production"],
+        "ans": 1,
+        "exp": "Price elasticity of demand measures the percentage change in quantity demanded relative to a percentage change in price, showing how responsive consumers are to price changes."
+      },
+      {
+        "type": "tf",
+        "q": "Perfect competition assumes that all firms produce homogeneous (identical) products.",
+        "ans": true,
+        "exp": "Yes, one of the key assumptions of perfect competition is product homogeneity. Consumers view products from different firms as perfect substitutes."
+      }
+    ]
+  },
+  {
+    "id": "C",
+    "title": "Macroeconomics (MCQ)",
+    "items": [
+      {
+        "type": "mcq",
+        "q": "Gross Domestic Product (GDP) measures:",
+        "opts": ["The total wealth of a nation", "The total production of goods and services within a nation's borders in a given period", "The total income of citizens only", "The total exports minus imports"],
+        "ans": 1,
+        "exp": "GDP is the total monetary value of all final goods and services produced within a country's borders during a specific period, serving as a key measure of economic activity."
+      },
+      {
+        "type": "mcq",
+        "q": "Inflation refers to:",
+        "opts": ["A decrease in the general price level of goods and services", "A sustained increase in the general price level of goods and services", "An increase in production", "A decrease in unemployment"],
+        "ans": 1,
+        "exp": "Inflation is a sustained increase in the average price level of goods and services in an economy over time, reducing the purchasing power of money."
+      }
+    ]
+  }
+];
+
+let selectedSections = new Set(SECTIONS.map(s=>s.id));
+let pool = [];
+let idx = 0;
+let score = 0;
+let answered = [];
+let shuffle = true;
+let currentAnswered = false;
+
+const secChoiceEl = document.getElementById('secChoice');
+function renderSetup(){
+  secChoiceEl.innerHTML = '';
+  SECTIONS.forEach(s=>{
+    const div = document.createElement('label');
+    div.className = 'sec-opt active';
+    div.innerHTML = `<input type="checkbox" checked data-id="${s.id}">
+      <div class="label">
+        <div class="name">Section ${s.id} — ${s.title}</div>
+        <div class="count">${s.items.length} questions</div>
+      </div>`;
+    const cb = div.querySelector('input');
+    cb.addEventListener('change', ()=>{
+      if(cb.checked){ selectedSections.add(s.id); div.classList.add('active'); }
+      else { selectedSections.delete(s.id); div.classList.remove('active'); }
+    });
+    secChoiceEl.appendChild(div);
+  });
+}
+renderSetup();
+
+function shuffleArr(a){
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+document.getElementById('startBtn').addEventListener('click', ()=>{
+  shuffle = document.getElementById('shuffleBox').checked;
+  pool = [];
+  SECTIONS.forEach(s=>{
+    if(selectedSections.has(s.id)){
+      s.items.forEach(it=>pool.push(Object.assign({secId:s.id, secTitle:s.title}, it)));
+    }
+  });
+  if(pool.length===0){ alert('Please select at least one section.'); return; }
+  if(shuffle) shuffleArr(pool);
+  idx = 0; score = 0; answered = [];
+  document.getElementById('setup').style.display='none';
+  document.getElementById('results').style.display='none';
+  document.getElementById('quiz').style.display='block';
+  renderQuestion();
+});
+
+function letterFor(i){ return String.fromCharCode(65+i); }
+
+function renderQuestion(){
+  currentAnswered = false;
+  const q = pool[idx];
+  document.getElementById('nextBtn').disabled = true;
+  document.getElementById('nextBtn').textContent = (idx===pool.length-1) ? 'Finish →' : 'Next Question →';
+  document.getElementById('qnum').textContent = `SECTION ${q.secId} · ${q.secTitle}`;
+  document.getElementById('qtext').textContent = q.q;
+  document.getElementById('explain').style.display='none';
+  document.getElementById('explainBody').innerHTML='';
+  const existingStamp = document.querySelector('.stamp-badge');
+  if(existingStamp) existingStamp.remove();
+
+  document.getElementById('metaLeft').textContent = `Question ${idx+1} of ${pool.length}`;
+  document.getElementById('metaRight').textContent = `Score: ${score} / ${answered.length}`;
+  document.getElementById('progressFill').style.width = ((idx)/pool.length*100)+'%';
+
+  const optsEl = document.getElementById('opts');
+  optsEl.innerHTML = '';
+
+  if(q.type==='mcq' || q.type==='tf'){
+    const opts = q.type==='tf' ? ['True','False'] : q.opts;
+    const ansIdx = q.type==='tf' ? (q.ans ? 0 : 1) : q.ans;
+    opts.forEach((optText,i)=>{
+      const div = document.createElement('div');
+      div.className='opt';
+      div.innerHTML = `<span class="letter">${letterFor(i)}</span><span>${optText}</span>`;
+      div.addEventListener('click', ()=>selectOption(i, ansIdx, div, q));
+      optsEl.appendChild(div);
+    });
+  } else if(q.type==='blank'){
+    const row = document.createElement('div');
+    row.className='blank-input-row';
+    row.innerHTML = `<input type="text" id="blankInput" placeholder="Type your answer, then press Reveal…" />`;
+    optsEl.appendChild(row);
+    const btn = document.createElement('button');
+    btn.className='btn secondary';
+    btn.style.marginTop='4px';
+    btn.textContent='Reveal Answer';
+    btn.addEventListener('click', ()=>revealBlank(q, btn));
+    optsEl.appendChild(btn);
+    document.getElementById('blankInput').addEventListener('keydown', (e)=>{
+      if(e.key==='Enter'){ e.preventDefault(); revealBlank(q, btn); }
+    });
+  }
+}
+
+function stampIt(card, isCorrect){
+  const badge = document.createElement('div');
+  badge.className = 'stamp-badge ' + (isCorrect?'correct':'wrong');
+  badge.textContent = isCorrect ? '✓ Correct' : '✗ Incorrect';
+  card.appendChild(badge);
+}
+
+function selectOption(i, ansIdx, el, q){
+  if(currentAnswered) return;
+  currentAnswered = true;
+  const isCorrect = (i===ansIdx);
+  if(isCorrect) score++;
+  answered.push({q:q.q, correct:isCorrect});
+
+  const allOpts = document.querySelectorAll('#opts .opt');
+  allOpts.forEach((o,idx2)=>{
+    o.classList.add('disabled-opt');
+    o.style.pointerEvents='none';
+    if(idx2===ansIdx) o.classList.add('correct');
+    else if(idx2===i) o.classList.add('wrong');
+    else o.classList.add('faded');
+  });
+
+  stampIt(document.getElementById('qcard'), isCorrect);
+  showExplain(q);
+  document.getElementById('metaRight').textContent = `Score: ${score} / ${answered.length}`;
+  document.getElementById('nextBtn').disabled = false;
+}
+
+function revealBlank(q, btn){
+  if(currentAnswered) return;
+  currentAnswered = true;
+  const input = document.getElementById('blankInput');
+  const userVal = (input.value||'').trim().toLowerCase();
+  const ansMain = q.ans.split(';')[0].split('/')[0].trim().toLowerCase();
+  const isCorrect = userVal.length>0 && (ansMain.includes(userVal) || userVal.includes(ansMain));
+  if(isCorrect) score++;
+  answered.push({q:q.q, correct:isCorrect});
+  input.disabled = true;
+  btn.disabled = true;
+  stampIt(document.getElementById('qcard'), isCorrect);
+  showExplain(q, true);
+  document.getElementById('metaRight').textContent = `Score: ${score} / ${answered.length}`;
+  document.getElementById('nextBtn').disabled = false;
+}
+
+function showExplain(q, isBlank){
+  const box = document.getElementById('explain');
+  const body = document.getElementById('explainBody');
+  let html = '';
+  if(isBlank){
+    html += `<div class="correct-ans">Correct answer: ${q.ans}</div>`;
+  }
+  html += `<div style="margin-top:6px;">${q.exp}</div>`;
+  body.innerHTML = html;
+  box.style.display='block';
+}
+
+document.getElementById('nextBtn').addEventListener('click', ()=>{
+  if(idx < pool.length-1){
+    idx++;
+    renderQuestion();
+  } else {
+    finishTest();
+  }
+});
+
+document.getElementById('quitBtn').addEventListener('click', ()=>{
+  if(confirm('End this session and see your results now?')) finishTest();
+});
+
+function finishTest(){
+  document.getElementById('quiz').style.display='none';
+  document.getElementById('results').style.display='block';
+  const total = answered.length;
+  const pct = total ? Math.round(score/total*100) : 0;
+  document.getElementById('scoreBig').textContent = pct+'%';
+  document.getElementById('scoreLine').textContent = `${score} of ${total} correct`;
+  let remark = '';
+  if(pct>=80) remark='Excellent — you clearly know your material.';
+  else if(pct>=60) remark='Good effort — review the misses below.';
+  else if(pct>=40) remark='Getting there — go over the explanations again.';
+  else remark='Keep practising — re-read the summary notes and try again.';
+  document.getElementById('scoreRemark').textContent = remark;
+
+  const list = document.getElementById('reviewList');
+  list.innerHTML = '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--ink-soft);margin-bottom:8px;">Question Review</div>';
+  answered.forEach((a,i)=>{
+    const row = document.createElement('div');
+    row.className='review-item';
+    row.innerHTML = `<span class="rmark ${a.correct?'ok':'no'}">${a.correct?'✓':'✗'}</span><span class="rq">${i+1}. ${a.q}</span>`;
+    list.appendChild(row);
+  });
+}
+
+document.getElementById('restartBtn').addEventListener('click', ()=>{
+  document.getElementById('results').style.display='none';
+  document.getElementById('setup').style.display='block';
+});
+</script>
+</body>
+</html>
